@@ -1,5 +1,6 @@
 import { Player } from "@/types/types";
 import { gameManager } from "./GameManager";
+import { generateStatsToken, verifyStatsToken } from "./jwt";
 import {
     broadcastPlayerList,
     calculateWPM,
@@ -11,7 +12,36 @@ export const handleMessage = (player: Player, raw: string) => {
         const data = JSON.parse(raw);
 
         if (data.type === "join") {
-            player.nickname = data.nickname;
+            let payload = null;
+
+            if (data.jwt) {
+                payload = verifyStatsToken(data.jwt);
+            }
+
+            if (data.nickname) {
+                const [jwt, newPayload] = generateStatsToken(data.nickname);
+                payload = newPayload;
+
+                player.connection.send(
+                    JSON.stringify({ type: "JWT", value: jwt })
+                );
+            }
+
+            if (payload) {
+                player.nickname = payload.nickname;
+                player.wins = payload.wins;
+                player.timestamp = payload.timestamp;
+            }
+
+            player.connection.send(
+                JSON.stringify({
+                    type: "stats",
+                    stats: {
+                        nickname: player.nickname,
+                        wins: player.wins,
+                    },
+                })
+            );
 
             player.connection.send(getCurrentGameStateJSON());
 
@@ -19,7 +49,7 @@ export const handleMessage = (player: Player, raw: string) => {
         }
         if (data.type === "progress") {
             if (player.progress === gameManager.getState().text.length - 1) {
-                gameManager.stop(player.nickname);
+                gameManager.win(player);
                 return;
             }
 

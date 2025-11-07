@@ -2,10 +2,13 @@ import type { Player } from "@/types/types";
 import cors from "@fastify/cors";
 import websocketPlugin from "@fastify/websocket";
 import crypto from "crypto";
+import dotenv from "dotenv";
 import Fastify, { FastifyInstance } from "fastify";
 import { gameManager, players } from "./GameManager";
 import { handleMessage } from "./handlers";
 import { broadcastPlayerList } from "./utils";
+
+dotenv.config();
 
 const startServer = async () => {
     const server: FastifyInstance = Fastify({});
@@ -25,6 +28,7 @@ const startServer = async () => {
             startTime: null,
             wpm: 0,
             accuracy: 0,
+            wins: 0,
         };
         players.set(id, player);
 

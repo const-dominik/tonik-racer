@@ -1,4 +1,5 @@
 import type { GameState, Player } from "@/types/types";
+import { reissueToken } from "./jwt";
 import { broadcast, broadcastPlayerList, getSentence } from "./utils";
 
 class GameManager {
@@ -38,15 +39,18 @@ class GameManager {
         }, 1000);
     }
 
-    stop(winner: string) {
+    win(player: Player) {
         this.cleanup();
 
         this.state.started = false;
 
         broadcast({
             type: "gameEnd",
-            winner,
+            winner: player.nickname,
         });
+
+        player.wins += 1;
+        reissueToken(player);
 
         this.resetPlayers();
         broadcastPlayerList();

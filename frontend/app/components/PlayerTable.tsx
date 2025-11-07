@@ -122,6 +122,25 @@ export function PlayerTable({ players, textLength }: PlayerTableProps) {
                     </span>
                 ),
             },
+            {
+                accessorKey: "wins",
+                header: ({ column }) => (
+                    <div
+                        style={{ cursor: "pointer", userSelect: "none" }}
+                        onClick={() =>
+                            column.toggleSorting(column.getIsSorted() === "asc")
+                        }
+                    >
+                        Wins{" "}
+                        {column.getIsSorted()
+                            ? column.getIsSorted() === "asc"
+                                ? "↑"
+                                : "↓"
+                            : ""}
+                    </div>
+                ),
+                cell: ({ row }) => <span>{row.getValue<number>("wins")}</span>,
+            },
         ],
         [textLength]
     );

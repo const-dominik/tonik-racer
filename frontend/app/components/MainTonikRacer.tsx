@@ -1,8 +1,15 @@
-import type { SentPlayer, WsData } from "@/types/types";
+import type { SentPlayer, Stats, WsData } from "@/types/types";
 import { useCallback, useEffect, useRef, useState } from "react";
+import useLocalStorage from "../hooks/useLocalStorage";
 import PlayerTable from "./PlayerTable";
 
-const MainTonikRacer = ({ nickname }: { nickname: string }) => {
+const MainTonikRacer = ({
+    nickname,
+    jwt,
+}: {
+    nickname?: string;
+    jwt?: string;
+}) => {
     const [text, setText] = useState("");
     const [countdown, setCountdown] = useState(0);
     const [progress, setProgress] = useState(0);
@@ -10,6 +17,8 @@ const MainTonikRacer = ({ nickname }: { nickname: string }) => {
     const [errors, setErrors] = useState(0);
     const [isConnected, setIsConnected] = useState(false);
     const [winner, setWinner] = useState<string | null>(null);
+    const [stats, setStats] = useState<Stats | null>(null);
+    const [, setJWT] = useLocalStorage("user-jwt", "");
 
     const wsRef = useRef<WebSocket | null>(null);
 
@@ -72,12 +81,20 @@ const MainTonikRacer = ({ nickname }: { nickname: string }) => {
                         resetGameState();
                         if (data.winner) setWinner(data.winner);
                         break;
+
+                    case "JWT":
+                        setJWT(data.value);
+                        break;
+
+                    case "stats":
+                        setStats(data.stats);
+                        break;
                 }
             } catch (error) {
                 console.error("Failed to parse WebSocket message:", error);
             }
         },
-        [resetGameState]
+        [resetGameState, setJWT]
     );
 
     const connect = useCallback(() => {
@@ -89,7 +106,7 @@ const MainTonikRacer = ({ nickname }: { nickname: string }) => {
         wsRef.current = ws;
 
         ws.onopen = () => {
-            ws.send(JSON.stringify({ type: "join", nickname }));
+            ws.send(JSON.stringify({ type: "join", nickname, jwt }));
             setIsConnected(true);
         };
 
@@ -141,6 +158,11 @@ const MainTonikRacer = ({ nickname }: { nickname: string }) => {
     return (
         <main className="flex min-h-screen w-full flex-col bg-amber-100 p-6">
             <div className="mx-auto w-full max-w-4xl">
+                {stats && (
+                    <div className="padding-8 absolute top-0 right-0">
+                        Hello, {stats?.nickname}! You have {stats?.wins} wins!
+                    </div>
+                )}
                 <h2 className="mb-4 text-2xl font-bold">
                     Countdown: {countdown}
                 </h2>

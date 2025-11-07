@@ -6,7 +6,8 @@ import NicknameForm from "./components/NicknameForm";
 import useLocalStorage from "./hooks/useLocalStorage";
 
 const Home = () => {
-    const [nickname, updateVal] = useLocalStorage("nickname", "");
+    const [JWT] = useLocalStorage("user-jwt", "");
+    const [nickname, setNickname] = useState("");
     const [hydrated, setHydrated] = useState(false);
 
     useEffect(() => {
@@ -18,11 +19,11 @@ const Home = () => {
         return null;
     }
 
-    if (!nickname) {
-        return <NicknameForm updateVal={updateVal} />;
+    if (!JWT && !nickname) {
+        return <NicknameForm setNickname={setNickname} />;
     }
 
-    return <MainTonikRacer nickname={nickname} />;
+    return <MainTonikRacer jwt={JWT} nickname={nickname} />;
 };
 
 export default Home;

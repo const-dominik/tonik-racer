@@ -3,16 +3,16 @@
 import { useState } from "react";
 
 export const NicknameForm = ({
-    updateVal,
+    setNickname,
 }: {
-    updateVal: (val: string) => void;
+    setNickname: (val: string) => void;
 }) => {
-    const [nickname, setNickname] = useState("");
+    const [formNick, setFormNick] = useState("");
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (!nickname.trim()) return;
-        updateVal(nickname.trim());
+        if (!formNick.trim()) return;
+        setNickname(formNick.trim());
     };
 
     return (
@@ -27,8 +27,8 @@ export const NicknameForm = ({
 
                 <input
                     type="text"
-                    value={nickname}
-                    onChange={(e) => setNickname(e.target.value)}
+                    value={formNick}
+                    onChange={(e) => setFormNick(e.target.value)}
                     placeholder="Enter your nickname"
                     className="w-64 rounded-lg border border-amber-500 p-3 text-center text-lg outline-none"
                 />

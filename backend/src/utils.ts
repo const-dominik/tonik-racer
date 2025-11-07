@@ -25,6 +25,7 @@ export const broadcastPlayerList = () => {
             progress: p.progress,
             wpm: p.wpm,
             accuracy: p.accuracy,
+            wins: p.wins,
         })),
     });
     players.forEach((p) => p.connection.send(msg));
