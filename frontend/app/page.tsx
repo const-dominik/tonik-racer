@@ -1,18 +1,27 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import MainTonikRacer from "./components/MainTonikRacer";
+import NicknameForm from "./components/NicknameForm";
+import useLocalStorage from "./hooks/useLocalStorage";
 
 const Home = () => {
+    const [nickname, updateVal] = useLocalStorage("nickname", "");
+    const [hydrated, setHydrated] = useState(false);
+
     useEffect(() => {
-        const checkServerCommunication = async () => {
-            const response = await fetch("http://localhost:8000/ping");
-            const data = await response.json();
-            console.log(data);
-        };
-        checkServerCommunication();
+        setHydrated(true);
     }, []);
 
-    return <div>Hello world!</div>;
+    if (!hydrated) {
+        // Don't render anything until hydration
+        return null;
+    }
+    if (!nickname) {
+        return <NicknameForm updateVal={updateVal} />;
+    }
+
+    return <MainTonikRacer nickname={nickname} />;
 };
 
 export default Home;
