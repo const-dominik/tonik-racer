@@ -28,6 +28,8 @@ async function start() {
             progress: 0,
             connection: conn,
             startTime: null,
+            wpm: 0,
+            accuracy: 0,
         };
         players.set(id, player);
 
@@ -75,6 +77,9 @@ const startGame = () => {
 const endGame = () => {
     players.forEach((player) => {
         player.progress = 0;
+        player.startTime = null;
+        player.wpm = 0;
+        player.accuracy = 0;
     });
 
     broadcast({ type: "gameEnd" });
@@ -98,7 +103,7 @@ const gameLoop = () => {
             countdown: state.countdown,
         });
 
-        if (state.countdown <= 0) {
+        if (state.countdown === 0) {
             clearInterval(gameInterval);
             endGame();
             startGame();
@@ -121,9 +126,20 @@ const broadcastPlayerList = () => {
         players: [...players.values()].map((p) => ({
             nickname: p.nickname,
             progress: p.progress,
+            wpm: p.wpm,
+            accuracy: p.accuracy,
         })),
     });
     players.forEach((p) => p.connection.send(msg));
+};
+
+const calculateWPM = (player: Player): number => {
+    if (!player.startTime || player.progress === 0) return 0;
+
+    const timeElapsed = (Date.now() - player.startTime) / 1000 / 60;
+    const wordsTyped = player.progress / 5;
+
+    return Math.round(wordsTyped / timeElapsed);
 };
 
 const handleMessage = (player: Player, raw: string) => {
@@ -138,7 +154,13 @@ const handleMessage = (player: Player, raw: string) => {
             broadcastPlayerList();
         }
         if (data.type === "progress") {
+            if (player.startTime === null && data.progress > 0) {
+                player.startTime = Date.now();
+            }
+
             player.progress = data.progress;
+            player.accuracy = data.accuracy;
+            player.wpm = calculateWPM(player);
 
             broadcastPlayerList();
         }

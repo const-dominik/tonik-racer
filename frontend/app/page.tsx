@@ -14,7 +14,7 @@ const Home = () => {
     }, []);
 
     if (!hydrated) {
-        // Don't render anything until hydration
+        // Don't render anything until hydration to avoid flash
         return null;
     }
     if (!nickname) {

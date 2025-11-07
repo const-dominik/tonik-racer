@@ -23,9 +23,10 @@ import {
 
 interface PlayerTableProps {
     players: SentPlayer[];
+    textLength: number;
 }
 
-const PlayerTable = ({ players }: PlayerTableProps) => {
+export function PlayerTable({ players, textLength }: PlayerTableProps) {
     const [sorting, setSorting] = useState<SortingState>([]);
 
     const columns = useMemo<ColumnDef<SentPlayer>[]>(
@@ -66,7 +67,59 @@ const PlayerTable = ({ players }: PlayerTableProps) => {
                     </div>
                 ),
                 cell: ({ row }) => (
-                    <span>{row.getValue<number>("progress")}%</span>
+                    <span>
+                        {(
+                            (row.getValue<number>("progress") * 100) /
+                            textLength
+                        ).toFixed(2)}
+                        %
+                    </span>
+                ),
+            },
+            {
+                accessorKey: "wpm",
+                header: ({ column }) => (
+                    <div
+                        style={{ cursor: "pointer", userSelect: "none" }}
+                        onClick={() =>
+                            column.toggleSorting(column.getIsSorted() === "asc")
+                        }
+                    >
+                        WPM{" "}
+                        {column.getIsSorted()
+                            ? column.getIsSorted() === "asc"
+                                ? "↑"
+                                : "↓"
+                            : ""}
+                    </div>
+                ),
+                cell: ({ row }) => (
+                    <span>
+                        {row.getValue<number | undefined>("wpm") ?? "-"}
+                    </span>
+                ),
+            },
+            {
+                accessorKey: "accuracy",
+                header: ({ column }) => (
+                    <div
+                        style={{ cursor: "pointer", userSelect: "none" }}
+                        onClick={() =>
+                            column.toggleSorting(column.getIsSorted() === "asc")
+                        }
+                    >
+                        Accuracy{" "}
+                        {column.getIsSorted()
+                            ? column.getIsSorted() === "asc"
+                                ? "↑"
+                                : "↓"
+                            : ""}
+                    </div>
+                ),
+                cell: ({ row }) => (
+                    <span>
+                        {row.getValue<number | undefined>("accuracy") ?? "-"}%
+                    </span>
                 ),
             },
         ],
@@ -114,6 +167,6 @@ const PlayerTable = ({ players }: PlayerTableProps) => {
             </TableBody>
         </Table>
     );
-};
+}
 
 export default PlayerTable;

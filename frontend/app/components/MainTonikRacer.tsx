@@ -8,6 +8,7 @@ const MainTonikRacer = ({ nickname }: { nickname: string }) => {
     const wsRef = useRef<WebSocket | null>(null);
     const [progress, setProgress] = useState(0);
     const [players, setPlayers] = useState<SentPlayer[]>([]);
+    const [errors, setErrors] = useState(0);
 
     const connect = useCallback(() => {
         const ws = new WebSocket("ws://localhost:8000/ws");
@@ -28,6 +29,7 @@ const MainTonikRacer = ({ nickname }: { nickname: string }) => {
                     setText(data.text);
                     setCountdown(data.countdown);
                     setProgress(0);
+                    setErrors(0);
                     break;
                 case "progress":
                     setPlayers(data.players);
@@ -35,6 +37,7 @@ const MainTonikRacer = ({ nickname }: { nickname: string }) => {
                 case "gameEnd":
                     setText("");
                     setProgress(0);
+                    setErrors(0);
                     break;
             }
         };
@@ -44,15 +47,28 @@ const MainTonikRacer = ({ nickname }: { nickname: string }) => {
         connect();
     }, [connect]);
 
+    const calculateAccuracy = (correct: number, total: number): number => {
+        if (total === 0) return 100;
+        return Math.round((correct / total) * 100);
+    };
+
     const handleTyping = (e: React.ChangeEvent<HTMLInputElement>) => {
         const val = e.target.value;
 
         if (val[val.length - 1] === text[progress]) {
             setProgress(progress + 1);
 
+            const accuracy = calculateAccuracy(val.length, val.length + errors);
+
             wsRef.current?.send(
-                JSON.stringify({ type: "progress", progress: val.length })
+                JSON.stringify({
+                    type: "progress",
+                    progress: val.length,
+                    accuracy: accuracy,
+                })
             );
+        } else {
+            setErrors(errors + 1);
         }
     };
 
@@ -73,7 +89,7 @@ const MainTonikRacer = ({ nickname }: { nickname: string }) => {
                         className="w-full rounded border p-2"
                     />
                     <h3 className="mt-6 mb-2 text-lg font-bold">Players:</h3>
-                    <PlayerTable players={players} />
+                    <PlayerTable players={players} textLength={text.length} />
                 </div>
             )}
         </main>
