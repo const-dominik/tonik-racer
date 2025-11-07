@@ -1,4 +1,4 @@
-import { Player, WsData } from "../types/types";
+import { Player, WsData } from "@/types/types";
 import { sentences } from "./data";
 import { gameManager, players } from "./GameManager";
 

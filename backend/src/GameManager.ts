@@ -1,4 +1,4 @@
-import type { GameState, Player } from "../types/types";
+import type { GameState, Player } from "@/types/types";
 import { broadcast, broadcastPlayerList, getSentence } from "./utils";
 
 class GameManager {

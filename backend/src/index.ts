@@ -1,8 +1,8 @@
+import type { Player } from "@/types/types";
 import cors from "@fastify/cors";
 import websocketPlugin from "@fastify/websocket";
 import crypto from "crypto";
 import Fastify, { FastifyInstance } from "fastify";
-import type { Player } from "../types/types";
 import { gameManager, players } from "./GameManager";
 import { handleMessage } from "./handlers";
 import { broadcastPlayerList } from "./utils";

@@ -4,10 +4,9 @@ import { useState } from "react";
 
 const useLocalStorage = <T>(key: string, defaultVal: T) => {
     const [value, setValue] = useState<T>(() => {
-        if (typeof window === "undefined") return defaultVal;
-        const item = window.localStorage.getItem(key);
-        if (!item) return defaultVal;
         try {
+            const item = localStorage.getItem(key);
+            if (!item) return defaultVal;
             return JSON.parse(item) as T;
         } catch {
             return defaultVal;

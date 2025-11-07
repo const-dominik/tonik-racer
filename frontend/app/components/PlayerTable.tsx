@@ -2,6 +2,7 @@
 
 "use client";
 
+import { SentPlayer } from "@/types/types";
 import {
     ColumnDef,
     flexRender,
@@ -11,7 +12,6 @@ import {
     useReactTable,
 } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
-import { SentPlayer } from "../../../types/types";
 import {
     Table,
     TableBody,

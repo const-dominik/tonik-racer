@@ -16,7 +16,7 @@ export const NicknameForm = ({
     };
 
     return (
-        <div className="flex h-screen w-screen flex-col items-center justify-center bg-amber-200">
+        <div className="flex h-screen w-screen flex-col items-center justify-center bg-amber-100">
             <form
                 onSubmit={handleSubmit}
                 className="flex flex-col items-center gap-4 rounded-xl bg-amber-50 p-8 shadow-md"

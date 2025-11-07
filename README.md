@@ -24,5 +24,4 @@ dla małego typeracera chyba lepiej, minimalny lag - gdyby był większy, lepiej
 
 ## Prod
 
-- od początku podział backendu i frontendu zamiast forsowanie tego w jednym repo,
 - zabezpieczenie przed oszustwami, najłatwiej sprawdzając czy eventy są trusted, chociaż to da się ominąć - chyba najlepiej zrobić captche z jakimś zakłóconym tekstem do przepisania na czas, chyba na typeracerze tak jest

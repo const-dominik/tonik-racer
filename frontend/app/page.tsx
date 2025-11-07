@@ -17,6 +17,7 @@ const Home = () => {
         // Don't render anything until hydration to avoid flash
         return null;
     }
+
     if (!nickname) {
         return <NicknameForm updateVal={updateVal} />;
     }

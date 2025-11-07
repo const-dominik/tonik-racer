@@ -1,17 +1,12 @@
 {
     "compilerOptions": {
         "target": "ESNext",
-        "module": "ESNext",
-        "moduleResolution": "Node",
-        "jsx": "preserve",
         "strict": true,
         "esModuleInterop": true,
         "forceConsistentCasingInFileNames": true,
         "skipLibCheck": true,
-        "baseUrl": ".",
-        "paths": {
-            "@/*": ["frontend/*"]
-        }
+        "moduleResolution": "bundler",
+        "resolveJsonModule": true
     },
-    "include": ["frontend/**/*"]
+    "exclude": ["node_modules", "dist", ".next"]
 }
