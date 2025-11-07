@@ -38,10 +38,26 @@ class GameManager {
         }, 1000);
     }
 
+    stop(winner: string) {
+        this.cleanup();
+
+        this.state.started = false;
+
+        broadcast({
+            type: "gameEnd",
+            winner,
+        });
+
+        this.resetPlayers();
+        broadcastPlayerList();
+
+        this.start();
+    }
+
     private startRound() {
         this.state.started = true;
         this.state.text = getSentence();
-        this.state.countdown = 15;
+        this.state.countdown = 20;
 
         this.resetPlayers();
 

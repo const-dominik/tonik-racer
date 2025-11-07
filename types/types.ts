@@ -28,4 +28,4 @@ export type WsData =
           countdown: number;
       }
     | { type: "progress"; players: Player[] }
-    | { type: "gameEnd" };
+    | { type: "gameEnd"; winner?: string };

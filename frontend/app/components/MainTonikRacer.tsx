@@ -9,6 +9,7 @@ const MainTonikRacer = ({ nickname }: { nickname: string }) => {
     const [players, setPlayers] = useState<SentPlayer[]>([]);
     const [errors, setErrors] = useState(0);
     const [isConnected, setIsConnected] = useState(false);
+    const [winner, setWinner] = useState<string | null>(null);
 
     const wsRef = useRef<WebSocket | null>(null);
 
@@ -56,6 +57,7 @@ const MainTonikRacer = ({ nickname }: { nickname: string }) => {
                         break;
 
                     case "start":
+                        setWinner(null);
                         setText(data.text);
                         setCountdown(data.countdown);
                         resetGameState();
@@ -68,6 +70,7 @@ const MainTonikRacer = ({ nickname }: { nickname: string }) => {
                     case "gameEnd":
                         setText("");
                         resetGameState();
+                        if (data.winner) setWinner(data.winner);
                         break;
                 }
             } catch (error) {
@@ -158,7 +161,7 @@ const MainTonikRacer = ({ nickname }: { nickname: string }) => {
                             </p>
                         </div>
 
-                        <div>
+                        <div className="mb-4">
                             <input
                                 type="text"
                                 value={text.slice(0, progress)}
@@ -187,7 +190,12 @@ const MainTonikRacer = ({ nickname }: { nickname: string }) => {
                         </div>
                     </div>
                 ) : (
-                    <div className="flex items-center justify-center py-12">
+                    <div className="flex flex-col items-center justify-center py-12">
+                        {winner && (
+                            <p className="text-lg text-amber-700">
+                                {winner} is the winner!
+                            </p>
+                        )}
                         <p className="text-lg text-amber-800">
                             Waiting for game to start...
                         </p>

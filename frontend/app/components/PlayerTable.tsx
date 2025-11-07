@@ -123,7 +123,7 @@ export function PlayerTable({ players, textLength }: PlayerTableProps) {
                 ),
             },
         ],
-        []
+        [textLength]
     );
 
     const table = useReactTable({

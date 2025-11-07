@@ -1,4 +1,5 @@
 import { Player } from "@/types/types";
+import { gameManager } from "./GameManager";
 import {
     broadcastPlayerList,
     calculateWPM,
@@ -17,6 +18,11 @@ export const handleMessage = (player: Player, raw: string) => {
             broadcastPlayerList();
         }
         if (data.type === "progress") {
+            if (player.progress === gameManager.getState().text.length - 1) {
+                gameManager.stop(player.nickname);
+                return;
+            }
+
             if (player.startTime === null && data.progress > 0) {
                 player.startTime = Date.now();
             }
