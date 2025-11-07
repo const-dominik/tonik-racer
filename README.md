@@ -35,4 +35,9 @@ Z dużych kawałków kodu, chat GPT wygenerował mi tylko komponent tabelki z sh
 
 - MainTonikRacer jest duży (jak na małą apke), można dla czytelności rozbić UI na mniejsze komponenty (teraz też nie jest źle, bo i tak nie ma duplikatów kodu, ale robi się nieczytelnie), a logikę wydzielić do hooka od komunikacji przez WS - tak bym pewnie zrobił w "normalnej apce".
 - Zabezpieczenie przed oszustwami, najłatwiej sprawdzając czy eventy są trusted, chociaż to da się ominąć - chyba najlepiej zrobić captche z jakimś zakłóconym tekstem do przepisania na czas, wydaje mi się że na typeracerze tak jest.
-- URL frontu/backendu z zhardcowoanego localhosta do env
+- zdockeryzować to
+- podbicie fastify-websocket, bo obecna wersja jest deprecated
+
+## Issues
+
+Dołączony użytkownik pojawia się podwójnie - prawie na pewno przez to, że na devie useEffecty odpalają się podwójnie, więc łączymy się podwójnie, po zbudowaniu powinno zniknąć, ale nie budowałem więc nie jestem pewien.
