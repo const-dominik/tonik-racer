@@ -27,6 +27,7 @@ async function start() {
             nickname: "",
             progress: 0,
             connection: conn,
+            startTime: null,
         };
         players.set(id, player);
 
@@ -56,35 +57,53 @@ const getSentence = () =>
 
 const startGame = () => {
     state.started = false;
+    state.text = "";
     state.countdown = 10;
-    state.text = getSentence();
 
-    const countdown = setInterval(() => {
-        state.countdown -= 1;
+    const countdownInterval = setInterval(() => {
+        broadcast({ type: "countdown", countdown: state.countdown });
 
-        if (state.countdown > 0) {
-            broadcast({ type: "countdown", countdown: state.countdown });
-        } else {
-            clearInterval(countdown);
-
+        if (state.countdown <= 0) {
+            clearInterval(countdownInterval);
             gameLoop();
+        } else {
+            state.countdown -= 1;
         }
     }, 1000);
 };
 
+const endGame = () => {
+    players.forEach((player) => {
+        player.progress = 0;
+    });
+
+    broadcast({ type: "gameEnd" });
+    broadcastPlayerList();
+};
+
 const gameLoop = () => {
     state.started = true;
-    state.countdown = 30;
-    broadcast({ type: "start", text: state.text, countdown: 30 });
+    state.text = getSentence();
+    state.countdown = 15;
 
-    const game = setInterval(() => {
-        state.countdown -= 1;
+    broadcast({
+        type: "start",
+        text: state.text,
+        countdown: state.countdown,
+    });
 
-        if (state.countdown > 0) {
-            broadcast({ type: "countdown", countdown: state.countdown });
-        } else {
-            clearInterval(game);
+    const gameInterval = setInterval(() => {
+        broadcast({
+            type: "countdown",
+            countdown: state.countdown,
+        });
+
+        if (state.countdown <= 0) {
+            clearInterval(gameInterval);
+            endGame();
             startGame();
+        } else {
+            state.countdown -= 1;
         }
     }, 1000);
 };
@@ -96,6 +115,17 @@ const getCurrentGameStateJSON = () =>
         countdown: state.countdown,
     });
 
+const broadcastPlayerList = () => {
+    const msg = JSON.stringify({
+        type: "progress",
+        players: [...players.values()].map((p) => ({
+            nickname: p.nickname,
+            progress: p.progress,
+        })),
+    });
+    players.forEach((p) => p.connection.send(msg));
+};
+
 const handleMessage = (player: Player, raw: string) => {
     try {
         const data = JSON.parse(raw);
@@ -104,6 +134,13 @@ const handleMessage = (player: Player, raw: string) => {
             player.nickname = data.nickname;
 
             player.connection.send(getCurrentGameStateJSON());
+
+            broadcastPlayerList();
+        }
+        if (data.type === "progress") {
+            player.progress = data.progress;
+
+            broadcastPlayerList();
         }
     } catch {}
 };

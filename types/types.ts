@@ -4,7 +4,12 @@ export type Player = {
     nickname: string;
     progress: number;
     connection: WebSocket;
+    startTime: number | null;
+    wpm?: number;
+    accuracy?: number;
 };
+
+export type SentPlayer = Omit<Player, "connection">;
 
 export type GameState = {
     started: boolean;
@@ -21,4 +26,6 @@ export type WsData =
     | {
           type: "countdown";
           countdown: number;
-      };
+      }
+    | { type: "progress"; players: Player[] }
+    | { type: "gameEnd" };
