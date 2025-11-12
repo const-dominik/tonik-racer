@@ -55,47 +55,44 @@ const MainTonikRacer = ({
         setErrors(0);
     }, []);
 
-    const handleMessage = useCallback(
-        (event: MessageEvent) => {
-            try {
-                const data: WsData = JSON.parse(event.data);
+    const handleMessage = useCallback((event: MessageEvent) => {
+        try {
+            const data: WsData = JSON.parse(event.data);
 
-                switch (data.type) {
-                    case "countdown":
-                        setCountdown(data.countdown);
-                        break;
+            switch (data.type) {
+                case "countdown":
+                    setCountdown(data.countdown);
+                    break;
 
-                    case "start":
-                        setWinner(null);
-                        setText(data.text);
-                        setCountdown(data.countdown);
-                        resetGameState();
-                        break;
+                case "start":
+                    setWinner(null);
+                    setText(data.text);
+                    setCountdown(data.countdown);
+                    resetGameState();
+                    break;
 
-                    case "progress":
-                        setPlayers(data.players);
-                        break;
+                case "progress":
+                    setPlayers(data.players);
+                    break;
 
-                    case "gameEnd":
-                        setText("");
-                        resetGameState();
-                        if (data.winner) setWinner(data.winner);
-                        break;
+                case "gameEnd":
+                    setText("");
+                    resetGameState();
+                    if (data.winner) setWinner(data.winner);
+                    break;
 
-                    case "JWT":
-                        setJWT(data.value);
-                        break;
+                case "JWT":
+                    setJWT(data.value);
+                    break;
 
-                    case "stats":
-                        setStats(data.stats);
-                        break;
-                }
-            } catch (error) {
-                console.error("Failed to parse WebSocket message:", error);
+                case "stats":
+                    setStats(data.stats);
+                    break;
             }
-        },
-        [resetGameState, setJWT]
-    );
+        } catch (error) {
+            console.error("Failed to parse WebSocket message:", error);
+        }
+    }, []);
 
     const connect = useCallback(() => {
         if (wsRef.current?.readyState === WebSocket.OPEN) {
@@ -114,16 +111,11 @@ const MainTonikRacer = ({
         ws.onclose = () => setIsConnected(false);
 
         return ws;
-    }, [nickname, handleMessage]);
+    }, []);
 
     useEffect(() => {
         const ws = connect();
-
-        return () => {
-            if (ws.readyState === WebSocket.OPEN) {
-                ws.close();
-            }
-        };
+        return () => ws.close();
     }, [connect]);
 
     const handleTyping = (e: React.ChangeEvent<HTMLInputElement>) => {
